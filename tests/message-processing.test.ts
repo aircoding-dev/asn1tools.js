@@ -4,87 +4,15 @@
  */
 
 import { compileString, hexToBytes, bytesToHex } from '../src/index';
+import fs from 'fs';
+import path from 'path';
 
 describe('Generic Message Processing', () => {
   let messageSpec: any;
 
   beforeAll(() => {
-    // Generic message definitions for testing
-    const genericAsn1 = `
-      Messages DEFINITIONS ::= BEGIN
-        SHORT ::= INTEGER(-32768..32767)
-        INT ::= INTEGER(-2147483648..2147483647)
-        LONG ::= INTEGER(-9223372036854775808..9223372036854775807)
-
-        PingRequest ::= SEQUENCE {
-          messageId LONG
-        }
-
-        PingResponse ::= SEQUENCE {
-          messageId LONG,
-          status INT
-        }
-
-        SystemInfoRequest ::= SEQUENCE {
-          messageId LONG
-        }
-
-        SystemInfoResponse ::= SEQUENCE {
-          messageId LONG,
-          status INT,
-          serverId INT,
-          version INT,
-          timestamp LONG,
-          nonce SHORT
-        }
-
-        DataRequest ::= SEQUENCE {
-          messageId LONG,
-          version INT,
-          category SHORT,
-          size LONG,
-          identifier OCTET STRING(SIZE(20)),
-          checksum OCTET STRING(SIZE(32))
-        }
-
-        DataResponse ::= SEQUENCE {
-          messageId LONG,
-          status INT
-        }
-
-        SubmitRequest ::= SEQUENCE {
-          messageId LONG,
-          deadline INT,
-          type SHORT,
-          priority BOOLEAN,
-          value LONG,
-          count LONG,
-          userId OCTET STRING(SIZE(20)),
-          signature OCTET STRING(SIZE(33))
-        }
-
-        SubmitResponse ::= SEQUENCE {
-          messageId LONG,
-          recordId OCTET STRING(SIZE(18)),
-          status INT
-        }
-
-        RequestMessage ::= CHOICE {
-          pingRequest [1] PingRequest,
-          systemInfoRequest [4] SystemInfoRequest,
-          dataRequest [6] DataRequest,
-          submitRequest [14] SubmitRequest
-        }
-
-        ResponseMessage ::= CHOICE {
-          pingResponse [1] PingResponse,
-          systemInfoResponse [4] SystemInfoResponse,
-          dataResponse [6] DataResponse,
-          submitResponse [14] SubmitResponse
-        }
-      END
-    `;
-
+    const schemaPath = path.join(__dirname, 'schemas', 'message-processing.asn');
+    const genericAsn1 = fs.readFileSync(schemaPath, 'utf8');
     messageSpec = compileString(genericAsn1);
   });
 

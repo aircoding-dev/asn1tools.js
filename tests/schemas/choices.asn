@@ -1,0 +1,6 @@
+Choices DEFINITIONS ::= BEGIN
+  Option ::= CHOICE {
+    a INTEGER,
+    b OCTET STRING ( SIZE(4) )
+  }
+END 

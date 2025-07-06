@@ -1,0 +1,8 @@
+Basic DEFINITIONS ::= BEGIN
+  TestString ::= OCTET STRING ( SIZE(10) )
+
+  Numbers ::= SEQUENCE {
+    a INTEGER,
+    b INTEGER (0..100)
+  }
+END 

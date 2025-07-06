@@ -1,0 +1,78 @@
+Messages DEFINITIONS ::= BEGIN
+  SHORT ::= INTEGER (-32768..32767)
+  INT ::= INTEGER (-2147483648..2147483647)
+  LONG ::= INTEGER (-9223372036854775808..9223372036854775807)
+
+  EmbeddedData ::= SEQUENCE {
+    id INTEGER,
+    data OCTET STRING (SIZE(4))
+  }
+
+  PingRequest ::= SEQUENCE {
+    messageId LONG
+  }
+
+  PingResponse ::= SEQUENCE {
+    messageId LONG,
+    status INT
+  }
+
+  SystemInfoRequest ::= SEQUENCE {
+    messageId LONG
+  }
+
+  SystemInfoResponse ::= SEQUENCE {
+    messageId LONG,
+    status INT,
+    serverId INT,
+    version INT,
+    timestamp LONG,
+    nonce SHORT
+  }
+
+  DataRequest ::= SEQUENCE {
+    messageId LONG,
+    version INT,
+    category SHORT,
+    size LONG,
+    identifier OCTET STRING (SIZE(20)),
+    checksum OCTET STRING (SIZE(32))
+  }
+
+  DataResponse ::= SEQUENCE {
+    messageId LONG,
+    status INT,
+    embeddedData SEQUENCE OF EmbeddedData
+  }
+
+  SubmitRequest ::= SEQUENCE {
+    messageId LONG,
+    deadline INT,
+    type SHORT,
+    priority BOOLEAN,
+    value LONG,
+    count LONG,
+    userId OCTET STRING (SIZE(20)),
+    signature OCTET STRING (SIZE(33))
+  }
+
+  SubmitResponse ::= SEQUENCE {
+    messageId LONG,
+    recordId OCTET STRING (SIZE(18)),
+    status INT
+  }
+
+  RequestMessage ::= CHOICE {
+    pingRequest [1] PingRequest,
+    systemInfoRequest [4] SystemInfoRequest,
+    dataRequest [6] DataRequest,
+    submitRequest [14] SubmitRequest
+  }
+
+  ResponseMessage ::= CHOICE {
+    pingResponse [1] PingResponse,
+    systemInfoResponse [4] SystemInfoResponse,
+    dataResponse [6] DataResponse,
+    submitResponse [14] SubmitResponse
+  }
+END 

@@ -39,9 +39,9 @@ export class Asn1Parser {
 
     this.skipWhitespaceAndComments();
     while (!this.checkKeyword('END') && !this.isAtEnd()) {
-      const typeAssignment = this.parseTypeAssignment();
-      types.set(typeAssignment.name, typeAssignment);
       this.skipWhitespaceAndComments();
+      const parsedType = this.parseTypeAssignment();
+      types.set(parsedType.name, parsedType);
     }
 
     this.expectKeyword('END');
@@ -69,7 +69,31 @@ export class Asn1Parser {
     } else if (this.checkKeyword('OCTET')) {
       type = this.parseOctetStringType();
     } else if (this.checkKeyword('SEQUENCE')) {
-      type = this.parseSequenceType();
+      // Peek ahead to decide between "SEQUENCE {...}" and "SEQUENCE OF <Type>"
+      const savedPos = this.position;
+      const savedLine = this.line;
+      const savedCol = this.column;
+
+      // Consume the keyword 'SEQUENCE'
+      this.expectKeyword('SEQUENCE');
+      this.skipWhitespaceAndComments();
+
+      if (this.checkKeyword('OF')) {
+        // It's a SEQUENCE OF construct
+        this.expectKeyword('OF');
+        const elementType = this.parseType();
+        type = {
+          name: '',
+          type: 'SEQUENCE_OF',
+          elementType
+        } as ParsedType;
+      } else {
+        // Not a SEQUENCE OF – rewind and parse as a normal SEQUENCE
+        this.position = savedPos;
+        this.line = savedLine;
+        this.column = savedCol;
+        type = this.parseSequenceType();
+      }
     } else if (this.checkKeyword('CHOICE')) {
       type = this.parseChoiceType();
     } else if (this.checkKeyword('ENUMERATED')) {
@@ -138,10 +162,14 @@ export class Asn1Parser {
 
     const members: ParsedType[] = [];
     
-    while (!this.check('}') && !this.isAtEnd()) {
+    while (true) {
+      this.skipWhitespaceAndComments();
+      if (this.check('}') || this.isAtEnd()) {
+        break;
+      }
       const member = this.parseSequenceMember();
       members.push(member);
-      
+      this.skipWhitespaceAndComments();
       if (this.check(',')) {
         this.expectToken(',');
       }
@@ -192,10 +220,14 @@ export class Asn1Parser {
 
     const choices: ParsedType[] = [];
     
-    while (!this.check('}') && !this.isAtEnd()) {
+    while (true) {
+      this.skipWhitespaceAndComments();
+      if (this.check('}') || this.isAtEnd()) {
+        break;
+      }
       const choice = this.parseChoiceAlternative();
       choices.push(choice);
-      
+      this.skipWhitespaceAndComments();
       if (this.check(',')) {
         this.expectToken(',');
       }
@@ -233,6 +265,7 @@ export class Asn1Parser {
     const values: Array<[string, number]> = [];
     let autoValue = 0;
     
+    this.skipWhitespaceAndComments();
     while (!this.check('}') && !this.isAtEnd()) {
       const name = this.parseIdentifier();
       let value = autoValue;
