@@ -116,6 +116,7 @@ export class Asn1Parser {
 
   private parseOctetStringType(): ParsedType {
     this.expectKeyword('OCTET');
+    this.skipWhitespaceAndComments();
     this.expectKeyword('STRING');
     return {
       name: '',

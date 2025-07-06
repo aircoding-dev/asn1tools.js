@@ -76,9 +76,9 @@ class MockNetworkClient {
 function createMessageSpec(): any {
   const genericAsn1 = `
     Messages DEFINITIONS ::= BEGIN
-      SHORT ::= INTEGER(-32768..32767)
-      INT ::= INTEGER(-2147483648..2147483647)
-      LONG ::= INTEGER(-9223372036854775808..9223372036854775807)
+      SHORT ::= INTEGER (-32768..32767)
+      INT ::= INTEGER (-2147483648..2147483647)
+      LONG ::= INTEGER (-9223372036854775808..9223372036854775807)
 
       PingRequest ::= SEQUENCE {
         messageId LONG
