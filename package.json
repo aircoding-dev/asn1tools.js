@@ -1,6 +1,6 @@
 {
   "name": "asn1tools-js",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ASN.1 encoding and decoding library for TypeScript/JavaScript, compatible with Python asn1tools",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

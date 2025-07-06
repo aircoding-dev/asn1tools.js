@@ -269,6 +269,7 @@ export class Asn1Parser {
 
   private parseConstraints(): any {
     this.expectToken('(');
+    this.skipWhitespaceAndComments();
     
     const constraints: any = {};
     
