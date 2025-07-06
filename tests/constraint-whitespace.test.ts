@@ -3,11 +3,11 @@ import { compileString, hexToBytes } from '../src/index';
 describe('Constraint whitespace tolerance', () => {
   const schemaWithSpaces = `
     Test DEFINITIONS ::= BEGIN
-      SHORT ::= INTEGER (-1..1)
-      Bytes ::= OCTET STRING (SIZE(4))
+      SHORT ::= INTEGER ( -1..1 )
+      Bytes ::= OCTET STRING  ( SIZE ( 4 ) )
       Complex ::= SEQUENCE {
         id INTEGER,
-        data OCTET STRING (SIZE(4))
+        data OCTET STRING ( SIZE ( 4 ) )
       }
     END
   `;
@@ -30,17 +30,17 @@ describe('OCTET STRING constraint whitespace in SEQUENCE', () => {
   it('compiles and encodes DataRequest with space before constraint', () => {
     const genericAsn1WithSpaces = `
       Messages DEFINITIONS ::= BEGIN
-        SHORT ::= INTEGER (-32768..32767)
-        INT ::= INTEGER (-2147483648..2147483647)
-        LONG ::= INTEGER (-9223372036854775808..9223372036854775807)
+        SHORT ::= INTEGER ( -32768..32767 )
+        INT ::= INTEGER ( -2147483648..2147483647 )
+        LONG ::= INTEGER (-9223372036854775808..9223372036854775807) 
 
         DataRequest ::= SEQUENCE {
           messageId LONG,
           version INT,
           category SHORT,
           size LONG,
-          identifier OCTET STRING (SIZE(20)),
-          checksum OCTET STRING (SIZE(32))
+          identifier OCTET STRING ( SIZE ( 20 ) ),
+          checksum OCTET STRING(SIZE(32))
         }
       END
     `;
